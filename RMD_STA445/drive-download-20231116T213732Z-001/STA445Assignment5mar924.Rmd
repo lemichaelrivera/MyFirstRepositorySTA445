@@ -1,0 +1,195 @@
+---
+title: "STA445Assignment5mar924"
+author: "Michael Rivera"
+date: "2023-11-09"
+output: pdf_document
+---
+
+```{r setup}
+library(tidyverse)   # loading ggplot2 and dplyr
+library(patchwork)   # arranging multiple graphs into 1 figure
+library(viridis)     # The viridis color schemes
+library(latex2exp)   # For plotting math notation
+library(plotly)     # for interactive hover-text
+```
+
+## Question 1
+The infmort data set from the package faraway gives the infant mortality rate for a variety of countries. The information is relatively out of date (from 1970s?), but will be fun to graph. 
+
+Visualize the data using by creating scatter plots of mortality vs income while faceting using region and setting color by oil export status. Utilize a  
+log
+10
+  
+transformation for both mortality and income axes.
+
+This can be done either by doing the transformation inside the aes() command or by utilizing the scale_x_log10() or scale_y_log10() layers. 
+
+The critical difference is if the scales are on the original vs log transformed scale. Experiment with both and see which you prefer.
+
+```{r}
+library(faraway)
+data(infmort)
+```
+
+a. The rownames() of the table gives the country names and you should create a new column that contains the country names. *rownames
+```{r}
+rownames(infmort)
+Ninfmort <- infmort
+NNinfmort <- Ninfmort %>%
+  mutate(
+    countryname = (rownames(infmort))
+  )
+
+NNinfmort
+```
+
+b. Create scatter plots with the log10() transformation inside the aes() command.
+```{r}
+ggplot(NNinfmort, aes(x=log10(income), y=mortality)) +
+  geom_point() +
+  
+  facet_wrap(. ~region)
+```
+
+c. Create the scatter plots using the scale_x_log10() and scale_y_log10(). Set the major and minor breaks to be useful and aesthetically pleasing. Comment on which version you find easier to read.
+```{r}
+#ggplot(NNinfmort, aes(x=income, y=log10(mortality))) +
+  #geom_point()
+
+library(cowplot)
+
+cowplot::plot_grid(
+  ggplot(NNinfmort, aes(x=income, y=mortality )) +
+    geom_point() +
+    scale_x_log10(breaks=c(100, 1000, 5000),
+                  minor=c(50, 500, 2500)) +
+    scale_y_log10(breaks=c(200, 800, 400, 100)) +
+    facet_wrap(. ~region)
+)
+```
+d. The package ggrepel contains functions geom_text_repel() and geom_label_repel() that mimic the basic geom_text() and geom_label() functions in ggplot2, but work to make sure the labels don’t overlap. Select 10-15 countries to label and do so using the geom_text_repel() function.
+
+```{r}
+library(ggrepel)
+plot <- NNinfmort
+plot2 <- slice_sample(NNinfmort, n=10)
+plot3 <- ggplot(plot2, aes(x=income, y=mortality, label = countryname)) +
+    geom_point() +
+    scale_x_log10(breaks=c(100, 1000, 5000),
+                  minor=c(50, 500, 2500)) +
+    scale_y_log10(breaks=c(200, 800, 400, 100)) 
+
+plot4 <- plot3 + geom_text_repel() + labs(title = 'Title')
+
+plot4
+
+#mutate new column country
+#str detect ifelse if country has 'r' else 'NA'
+```
+
+
+
+## Question 2
+Using the datasets::trees data, complete the following:
+a. Create a regression model for 
+y = Volume as a function of 
+x = Height.
+
+```{r}
+data(trees)
+trees
+x <- trees$Height
+y <- trees$Volume
+
+TreeModel <- lm(y~x)
+TreeModel
+```
+
+b. Using the summary command, get the y-intercept and slope of the regression line.
+
+```{r}
+#summary(trees)
+x <- trees$Height
+y <- trees$Volume
+
+TreeModel <- lm(y~x)
+TreeModel
+
+y_intercept <- TreeModel$coefficients[[1]]
+slopeee <- TreeModel$coefficients[[2]]
+summary(TreeModel)
+```
+c. Using ggplot2, create a scatter plot of Volume vs Height.
+
+```{r}
+ggplot(trees, aes(x=Volume, y=Height)) +
+  geom_point()
+```
+d. Create a nice white filled rectangle to add text information to using by adding the following annotation layer.
+
+```{r}
+ggplot(trees, aes(x=Volume, y=Height)) +
+  geom_point() +
+  annotate('rect', xmin=65, xmax=75, ymin=60, ymax=74,
+         fill='white', color='black') 
+```
+e. Add some annotation text to write the equation of the line
+        $\hat{y}_i = -87.12 + 1.54 * x_i$ in the text area.
+
+```{r}
+ggplot(trees, aes(x=Height, y=Volume)) +
+  geom_point() +
+  annotate('rect', xmin=63, xmax=77, ymin=60, ymax=74, fill='white', color='black',
+           ) +
+  annotate('text', x=70, y=65, xmin=65, xmax=75, ymin=60, ymax=74,
+           label = latex2exp::TeX('$\\hat{y}_i = -87.12 + 1.54 * x_i$'))
+```
+f. Add annotation to add $R^2 = 0.358$
+```{r}
+ggplot(trees, aes(x=Height, y=Volume)) +
+  geom_point() +
+  annotate('rect', xmin=63, xmax=77, ymin=60, ymax=74, fill='white', color='black',
+           ) +
+  annotate('text', x=70, y=65, xmin=65, xmax=75, ymin=60, ymax=74,
+           label = latex2exp::TeX('$\\hat{y}_i = -87.12 + 1.54 * x_i$')) +
+  annotate('text', x=70, y=47, xmin=65, xmax=75, ymin=60, ymax=74,
+           label = latex2exp::TeX('$R^2 = 0.358$'))
+```
+g. Add the regression line in red. The most convenient layer function to uses
+        is `geom_abline()`. It appears that the `annotate` doesn't work with
+        `geom_abline()` so you'll have to call it directly.
+```{r}
+ggplot(trees, aes(x=Height, y=Volume)) +
+  geom_point() +
+  geom_abline(slope = slopeee, intercept = y_intercept, color='red') +
+  annotate('rect', xmin=63, xmax=77, ymin=60, ymax=74, fill='white', color='black',
+           ) +
+  annotate('text', x=70, y=65, xmin=65, xmax=75, ymin=60, ymax=74,
+           label = latex2exp::TeX('$\\hat{y}_i = -87.12 + 1.54 * x_i$')) +
+  annotate('text', x=70, y=47, xmin=65, xmax=75, ymin=60, ymax=74,
+           label = latex2exp::TeX('$R^2 = 0.358$'))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

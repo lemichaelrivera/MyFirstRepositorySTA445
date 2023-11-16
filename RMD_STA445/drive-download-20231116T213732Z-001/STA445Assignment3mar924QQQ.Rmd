@@ -1,0 +1,345 @@
+---
+title: "Assignment2_445"
+author: "Michael Rivera"
+date: "2023-10-17"
+output: pdf_document
+---
+```{r}
+#library(tidyverse)
+#library(lubridate)
+```
+
+## Question 1
+Convert the following to date or date/time objects.
+
+a. September 13, 2010.
+```{r}
+mdy('September 13, 2010')
+```
+
+b. Sept 13, 2010.
+```{r}
+make_date(year = 2010, month = 9, day = 13)
+```
+
+c. Sep 13, 2010.
+```{r}
+mdy('Sep 13, 2010')
+```
+
+d. S 13, 2010. Comment on the month abbreviation needs.
+```{r}
+make_date(year = 2010, month = 9, day = 13)
+# it appears that you need the month as a number, a 3 character abbreviation, or the full month written out for it to work with a format like mdy()
+```
+
+e. 07-Dec-1941.
+```{r}
+dmy('07-Dec-1941')
+```
+
+
+f. 1-5-1998. Comment on why you might be wrong.
+```{r}
+dmy('1-5-1998')
+mdy('1-5-1998')
+# due to the format
+# there is some ambiguity
+# on if 1 and 5 refer to
+# the 1st or 5th of January/May
+```
+
+
+g. 21-5-1998. Comment on why you know you are correct.
+```{r}
+dmy('21-5-1998')
+# I know I chose the correct format here
+# because there is no doubt about
+# which number refers to the day/month/year
+# because months only go up to 12 and years 
+# are the only 4 digit numbers
+```
+
+h. 2020-May-5 10:30 am
+```{r}
+ymd_hm('2020-May-5 10:30 am')
+```
+
+i. 2020-May-5 10:30 am PDT (ex Seattle)
+```{r}
+ymd_hm('2020-May-5 10:30 am', tz = 'US/Pacific')
+
+```
+
+j. 2020-May-5 10:30 am AST (ex Puerto Rico)
+```{r}
+ymd_hm('2020-May-5 10:30 am', tz = 'America/Puerto_Rico')
+```
+
+## Question 2
+Using just your date of birth (ex Sep 7, 1998) and today’s date calculate the following Write your code in a manner that the code will work on any date after you were born.:
+
+a. Calculate the date of your 64th birthday.
+```{r}
+bday <- dmy('27 June, 1997')
+bday
+bday + years(64)
+```
+
+b. Calculate your current age (in years). Hint: Check your age is calculated correctly if your birthday was yesterday and if it were tomorrow!
+```{r}
+bday
+timenow <- lubridate::now()
+timenow
+
+age = interval(bday, timenow)
+
+agenow <- as.period(age)
+agenow
+```
+
+c. Using your result in part (b), calculate the date of your next birthday.
+```{r}
+#nextbday2 <- dmy('27 June 2024')
+#nextbday2
+
+nextbday <- update(bday, year=2024)
+nextbday
+```
+
+d. The number of days until your next birthday.
+```{r}
+daysto <- interval(timenow, nextbday)
+
+daystonextbday <- as.period(daysto, unit = 'days')
+
+daystonextbday
+```
+
+e. The number of months and days until your next birthday.
+
+
+```{r}
+MDtonextbday <- as.period(daysto)
+MDtonextbday
+```
+## Question 3
+Suppose you have arranged for a phone call to be at 3 pm on May 8, 2015 at Arizona time. However, the recipient will be in Auckland, NZ. What time will it be there?
+
+```{r}
+mycall <- dmy_hm('8 May, 2015 3:00 pm', tz = 'US/Arizona')
+mycall
+
+mycall %>%
+  with_tz(., tzone = 'NZ')
+```
+
+## Question 4
+From this book’s GitHub directory, navigate to the data-raw directory and then download the Pulliam_Airport_Weather_Station.csv data file. 
+
+(There are several weather station files. Make sure you get the correct one!) 
+
+There is a DATE column (is it of type date when you import the data?) as well as the Maximum and Minimum temperature. 
+
+For the last 5 years of data we have (exactly, not just starting at Jan 1, 2014!), plot the time series of daily maximum temperature with date on the x-axis. 
+
+Write your code so that it will work if I update the dateset. 
+
+Hint: Find the maximum date in the data set and then subtract 5 years. Will there be a difference if you use dyears(5) vs years(5)? Which seems more appropriate here?
+```{r}
+
+```
+
+
+
+
+## Question 5
+It turns out there is some interesting periodicity regarding the number of births on particular days of the year.
+
+a. Using the mosaicData package, load the data set Births78 which records the number of children born on each day in the United States in 1978. Because this problem is intended to show how to calculate the information using the date, remove all the columns except date and births.
+```{r}
+
+```
+
+
+b. Graph the number of births vs the date with date on the x-axis. What stands out to you? Why do you think we have this trend?
+```{r}
+
+```
+
+
+c. To test your assumption, we need to figure out the what day of the week each observation is. Use dplyr::mutate to add a new column named dow that is the day of the week (Monday, Tuesday, etc). This calculation will involve some function in the lubridate package and the date column.
+```{r}
+
+```
+
+
+d.Plot the data with the point color being determined by the day of the week variable.
+```{r}
+
+```
+
+
+## Question 1
+For the following regular expression, explain in words what it matches on. Then add test strings to demonstrate that it in fact does match on the pattern you claim it does. 
+
+Make sure that your test set of strings has several examples that match as well as several that do not.
+
+If you copy the Rmarkdown code for these exercises directly from my source pages, make sure to remove the eval=FALSE from the R-chunk headers.
+
+a. This regular expression matches: Insert your answer here…
+
+strings that contain the character 'a', but, crucially, not 'A', which is why 'Anne' returns a FALSE, while 'Michael' returns a TRUE
+```{r}
+strings <- c('Anne', 'Michael', 'Evan', 'Zeke')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, 'a') )
+```
+
+b. This regular expression matches: Insert your answer here…
+This expression detects if your string contains 'ab' anywhere in the string, but, crucially, this still does not include capitalization, such as with 'Abby'.
+
+```{r}
+
+strings <- c('Abby', 'Gabby', 'jab', 'ACAB')
+data.frame( string = strings ) %>%
+  mutate( result = str_detect(string, 'ab') )
+```
+
+c)  This regular expression matches:  *Insert your answer here...*
+This expression searches for if the strings contain either 'a' or 'b' as a character, even if only one is present. This still does not include capitalization 'AB'.
+        
+```{r}
+        strings <- c('AB', 'ab', 'Jab', 'Abby', 'Gabby')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '[ab]') )
+```
+d)  This regular expression matches:  *Insert your answer here...*
+This expression is looking for the characters 'ab' in a string, but only at the beginning of a string as indicated by the ^.
+```{r}
+        strings <- c('ab', 'Gabby', 'Abby', 'JaB', 'abbyyy')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '^[ab]') )
+```
+e. This expression detects within the strings if there are any digits that are separated by white space from the characters 'a' or 'A'
+```{r}
+strings <- c('13 aA', 'a 123', '123 a', 'r123A', 'r123 A')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '\\d+\\s[aA]') )
+```
+f. This expression detects if there are any digits which are followed by zero or more white space containing the characters 'a' or 'A'
+```{r}
+        strings <- c('13 aA', 'a 123', '123 a', 'r123A', 'r123 A', 'a123 a', 'a123')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '\\d+\\s*[aA]') )
+```
+g.This expression detects if any character  of any length exists. this includes ' '. 
+```{r}
+        strings <- c('', 'a', '123', 'eeee', 'WEWEWE')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '.*') )
+```
+h. this expression detects if the beginning of a given string contains two alphanumeric characters prior to the characters 'bar'. 
+```{r}
+        strings <- c('1', '11bar', '11 bar', 'd11bar', '11bard')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '^\\w{2}bar') )
+```
+i.this expression detects if a given string contains 'foo' followed by a '.' character, followed by 'bar'
+```{r}
+        strings <- c('foo.bar', 'foobar', '11bar')
+        data.frame( string = strings ) %>%
+          mutate( result = str_detect(string, '(foo\\.bar)|(^\\w{2}bar)') )
+```
+
+
+## Question 2
+The following file names were used in a camera trap study. 
+
+S number represents the site, 
+P is the plot within a site, 
+C is the camera number within the plot, 
+
+the first string of numbers is the
+
+YearMonthDay 
+
+and the second string of numbers is the 
+
+HourMinuteSecond.
+
+```{r}
+file.names <- c( 'S123.P2.C10_20120621_213422.jpg',
+                 'S10.P1.C1_20120622_050148.jpg',
+                 'S187.P2.C2_20120702_023501.jpg')
+```
+
+Produce a data frame with columns corresponding to the site, plot, camera, year, month, day, hour, minute, and second for these three file names. So we want to produce code that will create the data frame:
+```{r}
+camframe <- c('site', 'plot', 'camera', 'year', 'month', 'day', 'hour', 'minute', 'second')
+
+filenames2 <- str_replace_all(file.names, pattern = '_', replacement = '\\.')
+
+filenames2
+```
+
+
+```{r}
+filenames3 <- str_split_fixed(filenames2, pattern = '\\.', 6)
+
+
+Year <- str_sub(filenames3[,4], start = 1, end = 4) 
+month <- str_sub(filenames3[,4], start = 5, end = 6)
+day <- str_sub(filenames3[,4], start = 7, end = 8)
+
+hour <- str_sub(filenames3[,5], start = 1, end = 2)
+minute <- str_sub(filenames3[,5], start = 3, end = 4)
+second <- str_sub(filenames3[,5], start = 5, end = 6)
+
+
+ffile <- cbind(filenames3, Year, month, day, hour, minute, second)
+ffile
+
+ffileDF <- data.frame(ffile)
+
+colnames(ffileDF) <- c('site', 'plot', 'camera', 'ymd', 'hms', 'filetype', 'year', 'month', 'day', 'hour', 'minute', 'second')
+
+ffileDF %>%
+   select('site', 'plot', 'camera', 'year', 'month', 'day', 'hour', 'minute', 'second')
+```
+
+
+
+## Question 3
+The full text from Lincoln’s Gettysburg Address is given below. 
+
+Calculate the mean word length Note: consider ‘battle-field’ as one word with 11 letters).
+
+```{r}
+Gettysburg <- 'Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this. But, in a larger sense, we can not dedicate -- we can not consecrate -- we can not hallow -- this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.'
+```
+
+```{r}
+Gettysburg2 <- str_replace_all(Gettysburg, pattern = ',', replacement = '')
+
+Gettysburg2 <- str_replace_all(Gettysburg2, pattern = '-', replacement = '')
+
+Gettysburg2 <- str_replace_all(Gettysburg2, pattern = '\\.', replacement = '')
+
+get_split <- scan(text = Gettysburg2, what = ' ')
+
+totalchar <- 0
+words <- 0
+for (i in 1:length(get_split)){
+  word_len <- str_length(get_split[i])
+  totalchar <- totalchar + word_len
+  words <- words + 1
+}
+
+meanchar <- totalchar/words
+meanchar
+
+totalchar
+get_split
+Gettysburg2
+```

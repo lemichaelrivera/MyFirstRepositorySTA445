@@ -1,0 +1,93 @@
+---
+title: "GSP445Assignment4"
+author: "Michael Rivera"
+date: "2023-10-26"
+output: pdf_document
+---
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+```
+
+## Question 1
+A common task is to take a set of data that has multiple categorical variables and create a table of the number of cases for each combination. 
+
+An introductory statistics textbook contains a dataset summarizing student surveys from several sections of an intro class. 
+
+The two variables of interest for us are Gender and Year which are the students gender and year in college.
+
+a. Download the dataset and correctly order the Year variable using the following:
+```{r}
+Survey <- read.csv('https://www.lock5stat.com/datasets3e/StudentSurvey.csv', na.strings=c('',' ')) 
+```
+
+b. Using some combination of dplyr functions, produce a data set with eight rows that contains the number of responses for each gender:year combination. 
+
+Make sure your table orders the Year variable in the correct order of First Year, Sophmore, Junior, and then Senior. 
+
+You might want to look at the following functions: dplyr::count and dplyr::drop_na.
+
+
+```{r}
+survey.2 <- Survey %>%
+  select(., Year, Sex) %>%
+  count(Year, Sex) 
+
+
+#Survey %>% group_by(Year, Sex) %>% summarize(Count = n())
+
+Survey2 <- Survey %>% 
+  count(Year, Sex)
+
+Survey2
+
+Survey2 <- drop_na(Survey2)
+
+Survey2 %>%
+  pivot_wider(
+    names_from = Year, 
+    values_from = n
+  )
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

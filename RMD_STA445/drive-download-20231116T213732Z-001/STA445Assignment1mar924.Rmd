@@ -1,0 +1,209 @@
+---
+title: "Assignment1_445"
+author: "Michael Rivera"
+date: "2023-10-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+Create a vector of three elements (2,4,6) and name that vector vec_a. Create a second vector, vec_b, that contains (8,10,12). Add these two vectors together and name the result vec_c.
+
+
+```{r}
+vec_a <- c(2,4,6)
+vec_b <- c(8,10,12)
+
+vec_c <- (vec_a + vec_b)
+vec_c
+```
+## Question 2
+Create a vector, named vec_d, that contains only two elements (14,20). Add this vector to vec_a. What is the result and what do you think R did (look up the recycling rule using Google)? What is the warning message that R gives you?
+
+```{r}
+vec_d <- c(14, 20)
+(vec_a + vec_d)
+
+# R will recycle the elements of the shorter vector (d) to come up with a vector the same length as the longer one, so 14 was added to 6, resulting in 20
+```
+#Question 3
+Next add 5 to the vector vec_a. What is the result and what did R do? Why doesn’t in give you a warning message similar to what you saw in the previous problem?
+
+```{r}
+vec_a + 5
+#because 5 is not a vector, it was added to each element of the vector. This addition didn't cause any issues and had no need to recycle so no error message was needed
+```
+## Question 4
+Generate the vector of integers  
+{1,2,…5}
+  in two different ways.
+
+First using the seq() function
+Using the a:b shortcut.
+```{r}
+seq(from = 1, to = 5, by = 1)
+
+1:5
+```
+##Question 5
+Generate the vector of even numbers  
+{2,4,6,…,20}
+ 
+
+Using the seq() function and
+Using the a:b shortcut and some subsequent algebra. Hint: Generate the vector 1-10 and then multiple it by 2.
+```{r}
+seq(from = 2, to = 20, by = 2)
+1:10 * 2
+#great hint!
+```
+## Question 6
+Generate a vector of 21 elements that are evenly placed between 0 and 1 using the seq() command and name this vector x.
+```{r}
+x <- seq(from = 0, to = 1, length.out = 21)
+x
+```
+## Question 7
+Generate the vector  
+{2,4,8,2,4,8,2,4,8}
+  using the rep() command to replicate the vector c(2,4,8).
+
+```{r}
+rep(c(2, 4, 8), 3)
+```
+## Question 8
+Generate the vector $\left\{ 2,2,2,2,4,4,4,4,8,8,8,8\right\}$
+  using the `rep()` command. You might need to check the help file for rep() to see all of the options that rep() will accept. In particular, look at the optional argument `each=`.
+
+```{r}
+rep(c(2,4,8), each=4)
+```
+## Question 10
+In this problem, we will work with the matrix
+
+Create the matrix in two ways and save the resulting matrix as M.
+
+i. Create the matrix using some combination of the seq() and matrix() commands.
+```{r}
+M <- matrix(seq(from = 2, to = 30, by = 2), nrow = 3, ncol = 5, byrow = TRUE)
+M
+```
+
+ii. Create the same matrix by some combination of multiple seq() commands and either the rbind() or cbind() command.
+```{r}
+a <- c(2, 4, 6, 8, 10)
+b <- c(12, 14, 16, 18, 20)
+c <- c(22, 24, 26, 28, 30)
+rbind(a, b, c)
+
+```
+Extract the second row out of M.
+```{r}
+M[2,]
+```
+Extract the element in the third row and second column of M.
+```{r}
+M[3,2]
+```
+## Question 12
+The following code creates a data.frame and then has two different methods for removing the rows with NA values in the column Grade. Explain the difference between the two.
+
+```{r}
+# commenting in an R chunk for consistency
+
+# The first example is using the '-' to 
+# provide the dataframe minus the elements 
+# which contain 'NA' values
+
+# The second example achieves the same result but does so by using the '!' symbol.
+# here we provide all the elements data frame
+# that are not equal (!) to NA
+```
+
+## Question 14
+Create and manipulate a list.
+
+a. Create a list named my.test with elements
+
+x = c(4,5,6,7,8,9,10)
+y = c(34,35,41,40,45,47,51)
+slope = 2.82
+p.value = 0.000131
+```{r}
+x <- c(4,5,6,7,8,9,10)
+y <- c(34,35,41,40,45,47,51)
+slopeval <- 2.82
+p.value <- 0.000131
+
+mylist <- list(x = x, y = y, slopeval = slopeval, p.value = p.value)
+
+str(mylist)
+```
+
+
+b. Extract the second element in the list.
+```{r}
+mylist[[2]]
+```
+
+
+c. Extract the element named p.value from the list.
+```{r}
+mylist$p.value
+```
+
+```{r}
+library(readxl)
+library(googlesheets4)
+```
+
+## Question 1
+Download from GitHub the data file Example_5.xls. Open it in Excel and figure out which sheet of data we should import into R. At the same time figure out how many initial rows need to be skipped. Import the data set into a data frame and show the structure of the imported data using the str() command. Make sure that your data has n=31
+
+observations and the three columns are appropriately named. If you make any modifications to the data file, comment on those modifications.
+  
+```{r}
+Example_5 <- read_excel('data-raw/Example_5.xls', sheet = 'RawData', skip = 4)
+
+str(Example_5)
+#there are two extra columns
+```
+
+## Question 2
+Download from GitHub the data file Example_3.xls. Import the data set into a data frame and show the structure of the imported data using the tail() command which shows the last few rows of a data table. Make sure the Tesla values are NA where appropriate and that both -9999 and NA are imported as NA values. If you make any modifications to the data file, comment on those modifications.
+
+```{r}
+Example_3 <- read_excel('data-raw/Example_3.xls', sheet = 'data', na = c('NA', -9999))
+
+tail(Example_3)
+```
+
+
+```{r}
+BodyFat <- read.table( 
+  file   = 'http://www.lock5stat.com/datasets3e/BodyFat.csv', # where the data lives
+  header = TRUE,                                              # first line is column names
+  sep    = ',' )                                              # Data is separated by commas
+
+str(BodyFat)
+```
+
+```{r}
+data.1 <- read_excel( 'data-raw/Example_1.xlsx'  )
+
+data.2 <- read_excel('data-raw/Example_2.xls', sheet=2     )   
+data.2 <- read_excel('data-raw/Example_2.xls', sheet='data')   
+
+data.4 <- read_excel('data-raw/Example_4.xls', sheet='data')   # Extra Column Example
+```
+
+
+
+
+
+
+
+
