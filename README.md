@@ -5,5 +5,5 @@ This is my first repository created for STA445 at NAU
 
 ### STA445
 
-### This is the course where I code and such
-### What if I don't add a line between?
+#### This is the course where I code and such
+#### What if I don't add a line between?
